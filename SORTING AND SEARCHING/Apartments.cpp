@@ -29,10 +29,11 @@ vector<ll> sieve(ll n) { vector<ll> primes; vector<bool> is_prime(n + 1, true); 
 
 
 void solve() {
+
     int n, m, k;
     cin >> n >> m >> k;
     vector<int> a(n);
-    vector<int> b(n);
+    vector<int> b(m);
     for(int i = 0; i < n; i++){
         cin >> a[i];
     }
@@ -48,12 +49,12 @@ void solve() {
     int ans = 0;
 
     while(h < n && ap < m){
-        int low = a[h] - k;
-        int high = a[h] + k;
-        if(b[ap] <= high && b[ap] >= low){
+        if(abs(a[h] - b[ap]) <= k){
+            ans++;
             h++;
             ap++;
-            ans++;
+        }else if(a[h] < b[ap]){
+            h++;
         } else{
             ap++;
         }

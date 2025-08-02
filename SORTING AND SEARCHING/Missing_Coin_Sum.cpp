@@ -26,18 +26,6 @@ bool is_prime(ll n) { if (n <= 1) return false; if (n <= 3) return true; if (n %
 vector<ll> sieve(ll n) { vector<ll> primes; vector<bool> is_prime(n + 1, true); for (ll p = 2; p <= n; p++) { if (is_prime[p]) { primes.pb(p); for (ll i = p * p; i <= n; i += p) { is_prime[i] = false; } } } return primes; }
 
 
-void help(int ind, vector<int> &x, set<int> &s, int sum){
-    if(ind == x.size()) {
-        s.insert(sum);
-    }
-
-    // pick
-    help(ind+1, x, s, sum+x[ind]);
-
-    // no pick
-    help(ind+1, x, s, sum);
-}
-
 
 
 void solve() {
@@ -45,17 +33,16 @@ void solve() {
     cin >> n;
     vector<int> x(n);
     for(int i = 0; i < n; i++) cin >> x[i];
-    set<int> s;
-    help(0, x, s, 0);
-    int v = 0;
-    for (int sum : s) {
-        if (sum == v) {
-            v++;
-        } else if (sum > v) {
-            break;
+    sort(x.begin(), x.end());
+    ll sum = 0;
+    for(int i = 0; i < n; i++){
+        if(sum +1< x[i]) {
+            cout << sum+1 << endl;
+            return;
         }
+        sum+=x[i];
     }
-    cout << v << endl;
+    cout << sum+1;
 }
 
 int main() {

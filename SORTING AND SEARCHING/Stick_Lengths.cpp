@@ -45,6 +45,7 @@ void solve() {
     } else{
         mid = (p[n/2 - 1] + p[n/2])/2;
     }
+    
 
     ll ans = 0;
     for(int i = 0; i < n; i++){

@@ -41,18 +41,25 @@ void solve() {
 
     bool found = false;
     for(ll i = 0; i < n; i++){
-        ll low = i+1;
-        ll high = n-1;
-        while(low < high){
-            ll val = a[i].first + a[low].first + a[high].first;
-            if(val == x){
-                cout << a[i].second << " " << a[low].second << " " << a[high].second << endl;
-                found = true;
-                return;
-            } else if(val < x){
-                low++;
-            } else{
-                high--;
+        for(ll j = i+1; j < n; j++){
+            ll low = j+1;
+            ll high = n-1;
+            while(low < high){
+                // Ensure all indices are distinct
+                if(i != j && i != low && i != high && j != low && j != high && low != high){
+                    ll val = a[i].first + a[j].first + a[low].first + a[high].first;
+                    if(val == x){
+                        cout << a[i].second << " " << a[j].second << " " << a[low].second << " " << a[high].second << endl;
+                        found = true;
+                        return;
+                    } else if(val < x){
+                        low++;
+                    } else{
+                        high--;
+                    }
+                } else {
+                    low++;
+                }
             }
         }
     }

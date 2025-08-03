@@ -28,23 +28,24 @@ vector<ll> sieve(ll n) { vector<ll> primes; vector<bool> is_prime(n + 1, true); 
 
 
 void solve() {
-    int n;
-    cin >> n;
+    int n, k;
+    cin >> n >> k;
     list<int> circle;
     for (int i = 1; i <= n; ++i) circle.push_back(i);
 
     auto it = circle.begin();
-    if (n > 1) ++it;
 
     while (!circle.empty()) {
+        // Move k-1 steps forward
+        for (int step = 1; step < k; ++step) {
+            ++it;
+            if (it == circle.end()) it = circle.begin();
+        }
         cout << *it << " ";
         auto to_remove = it;
-        it++;
+        ++it;
         circle.erase(to_remove);
-
         if (circle.empty()) break;
-        if (it == circle.end()) it = circle.begin();
-        it++;
         if (it == circle.end()) it = circle.begin();
     }
 }

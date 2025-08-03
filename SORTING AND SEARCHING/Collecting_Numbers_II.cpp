@@ -1,38 +1,11 @@
 #include <bits/stdc++.h>
 using namespace std;
 
-#define fastio ios::sync_with_stdio(0); cin.tie(0); cout.tie(0);
-#define pb push_back
-#define all(v) v.begin(), v.end()
-#define rall(v) v.rbegin(), v.rend()
-#define fi first
-#define se second
-#define mp make_pair
-#define sz(x) ((int)(x).size())
-#define vi vector<int>
-#define pii pair<int, int>
-#define vii vector<pii>
-
-typedef long long ll;
-typedef vector<ll> vll;
-typedef vector<string> vs;
-const ll INF = 1e18;
-const ll MOD = 1e9 + 7;
-
-// Common Functions
-ll gcd(ll a, ll b) { while (b) { a %= b; swap(a, b); } return a; }
-ll lcm(ll a, ll b) { return a / gcd(a, b) * b; }
-bool is_prime(ll n) { if (n <= 1) return false; if (n <= 3) return true; if (n % 2 == 0 || n % 3 == 0) return false; for (ll i = 5; i * i <= n; i += 6) { if (n % i == 0 || n % (i + 2) == 0) return false; } return true; }
-vector<ll> sieve(ll n) { vector<ll> primes; vector<bool> is_prime(n + 1, true); for (ll p = 2; p <= n; p++) { if (is_prime[p]) { primes.pb(p); for (ll i = p * p; i <= n; i += p) { is_prime[i] = false; } } } return primes; }
-
-
-
+#define fastio ios::sync_with_stdio(0); cin.tie(0)
 
 void solve() {
-    int n;
-    cin >> n;
-    int m;
-    cin >> m;
+    int n, m;
+    cin >> n >> m;
     vector<int> x(n);
     vector<int> pos(n, 0);
     for (int i = 0; i < n; i++) {
@@ -43,43 +16,56 @@ void solve() {
     }
 
     int ans = 1;
-    for(int i =1 ; i < n; i++){
-        if(pos[i] < pos[i-1]) ans++;
+    for (int i = 1; i < n; i++) {
+        if (pos[i] < pos[i - 1]) ans++;
     }
-    
-    for(int oij = 0; oij < m; oij++){
+
+    for (int q = 0; q < m; q++) {
         int i, j;
         cin >> i >> j;
-        i = i-1;
-        j = j-1;
+        i--, j--;
+
         int curContribution = 0;
-        if(x[i]-1>=0 && pos[x[i]] < pos[x[i]-1]) curContribution++;
-        if(x[i]+1<n && pos[x[i]+1] < pos[x[i]]) curContribution++;
-        if(x[j]-1>=0 && pos[x[j]] < pos[x[j]-1]) curContribution++;
-        if(x[j]+1<n && pos[x[j]+1] < pos[x[j]]) curContribution++;
 
-        ans = ans - curContribution;
-        swap(pos[x[i]], pos[x[j]]);
+        // Handle before swap
+        if (x[i] - 1 >= 0 && x[i] - 1 != x[j]) curContribution += (pos[x[i]] < pos[x[i] - 1]);
+        if (x[i] + 1 < n && x[i] + 1 != x[j]) curContribution += (pos[x[i] + 1] < pos[x[i]]);
+        if (x[j] - 1 >= 0 && x[j] - 1 != x[i]) curContribution += (pos[x[j]] < pos[x[j] - 1]);
+        if (x[j] + 1 < n && x[j] + 1 != x[i]) curContribution += (pos[x[j] + 1] < pos[x[j]]);
+
+        if (abs(x[i] - x[j]) == 1) {
+            int a = x[i], b = x[j];
+            if (a > b) swap(a, b); // now a < b
+            if (pos[b] < pos[a]) curContribution++;
+        }
+
+        ans -= curContribution;
+
         swap(x[i], x[j]);
+        pos[x[i]] = i;
+        pos[x[j]] = j;
+
         curContribution = 0;
-        if(x[i]-1>=0 && pos[x[i]] < pos[x[i]-1]) curContribution++;
-        if(x[i]+1<n && pos[x[i]+1] < pos[x[i]]) curContribution++;
-        if(x[j]-1>=0 && pos[x[j]] < pos[x[j]-1]) curContribution++;
-        if(x[j]+1<n && pos[x[j]+1] < pos[x[j]]) curContribution++;
 
-        ans = ans + curContribution;
-        cout << ans << endl;
+        // Handle after swap
+        if (x[i] - 1 >= 0 && x[i] - 1 != x[j]) curContribution += (pos[x[i]] < pos[x[i] - 1]);
+        if (x[i] + 1 < n && x[i] + 1 != x[j]) curContribution += (pos[x[i] + 1] < pos[x[i]]);
+        if (x[j] - 1 >= 0 && x[j] - 1 != x[i]) curContribution += (pos[x[j]] < pos[x[j] - 1]);
+        if (x[j] + 1 < n && x[j] + 1 != x[i]) curContribution += (pos[x[j] + 1] < pos[x[j]]);
+
+        if (abs(x[i] - x[j]) == 1) {
+            int a = x[i], b = x[j];
+            if (a > b) swap(a, b);
+            if (pos[b] < pos[a]) curContribution++;
+        }
+
+        ans += curContribution;
+        cout << ans << '\n';
     }
-
 }
 
 int main() {
     fastio;
-
-    int t=1;
-    while (t--) {
-        solve();
-    }
-
+    solve();
     return 0;
 }

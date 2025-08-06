@@ -17,4 +17,5 @@ int main() {
         }
         cout << (dp[1][0] + dp[1][1]) % 1000000007 << endl;
     }
+    return 0;
 }

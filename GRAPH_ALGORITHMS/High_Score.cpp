@@ -26,90 +26,84 @@ bool is_prime(ll n) { if (n <= 1) return false; if (n <= 3) return true; if (n %
 vector<ll> sieve(ll n) { vector<ll> primes; vector<bool> is_prime(n + 1, true); for (ll p = 2; p <= n; p++) { if (is_prime[p]) { primes.pb(p); for (ll i = p * p; i <= n; i += p) { is_prime[i] = false; } } } return primes; }
 
 
-
-
 void solve() {
-    int n, m;
+    long long n, m;
     cin >> n >> m;
-    vector<tuple<int, int, int>> adj(n);
-    for(int i = 0; i < n; i++) {
-        int u, v, w;
+    vector<tuple<long long, long long, long long>> edges;
+    edges.reserve(m);
+
+    for(long long i = 0; i < m; i++) {
+        long long u, v, w;
         cin >> u >> v >> w;
-        u = u - 1; // Convert to 0-based index
-        v = v - 1; // Convert to 0-based index
-        adj[i] = make_tuple(u, v, w);
+        u--; v--;
+        edges.push_back({u, v, w});
     }
 
-    // write max bellman-ford algorithm here
     vector<ll> dist(n, -INF);
-    dist[0] = 0; // Assuming the starting node is 0
-    for (int i = 0; i < n - 1; i++) {
-        for (const auto& [u, v, w] : adj) {
+    dist[0] = 0;
+
+    // Bellman–Ford to find max distances
+    for (long long i = 0; i < n - 1; i++) {
+        for (auto &[u, v, w] : edges) {
             if (dist[u] != -INF && dist[u] + w > dist[v]) {
                 dist[v] = dist[u] + w;
             }
         }
     }
 
-    // Check for positive cycles
-    bool hasCycle = false;
+    // Detect vertices affected by positive cycles
     vector<bool> inCycle(n, false);
-    for (const auto& [u, v, w] : adj) {
+    for (auto &[u, v, w] : edges) {
         if (dist[u] != -INF && dist[u] + w > dist[v]) {
-            hasCycle = true;
             inCycle[v] = true;
         }
     }
 
-    // Build graph for reachability checks
-    vector<vector<int>> g(n), rg(n);
-    for (const auto& [u, v, w] : adj) {
-        g[u].pb(v);
-        rg[v].pb(u);
+    // Build adjacency lists
+    vector<vector<long long>> g(n), rg(n);
+    for (auto &[u, v, w] : edges) {
+        g[u].push_back(v);
+        rg[v].push_back(u);
     }
 
-    // BFS from 0
+    // BFS from start
     vector<bool> reachFrom0(n, false);
-    queue<int> q;
+    queue<long long> q;
     q.push(0);
     reachFrom0[0] = true;
     while (!q.empty()) {
-        int u = q.front(); q.pop();
-        for (int v : g[u]) {
-            if (!reachFrom0[v]) {
-                reachFrom0[v] = true;
-                q.push(v);
+        long long u = q.front(); q.pop();
+        for (long long nxt : g[u]) {
+            if (!reachFrom0[nxt]) {
+                reachFrom0[nxt] = true;
+                q.push(nxt);
             }
         }
     }
 
-    // BFS from n-1 in reverse graph
+    // BFS from end in reverse graph
     vector<bool> reachToN1(n, false);
-    q.push(n-1);
-    reachToN1[n-1] = true;
+    q.push(n - 1);
+    reachToN1[n - 1] = true;
     while (!q.empty()) {
-        int u = q.front(); q.pop();
-        for (int v : rg[u]) {
-            if (!reachToN1[v]) {
-                reachToN1[v] = true;
-                q.push(v);
+        long long u = q.front(); q.pop();
+        for (long long nxt : rg[u]) {
+            if (!reachToN1[nxt]) {
+                reachToN1[nxt] = true;
+                q.push(nxt);
             }
         }
     }
 
-    bool cycleAffectsPath = false;
+    // If any cycle node is reachable from start and can reach end → infinite score
     for (int i = 0; i < n; i++) {
         if (inCycle[i] && reachFrom0[i] && reachToN1[i]) {
-            cycleAffectsPath = true;
-            break;
+            cout << -1 << "\n";
+            return;
         }
     }
 
-    if (cycleAffectsPath) cout << -1 << '\n';
-    else cout << dist[n-1] << '\n';
-
-
-
+    cout << dist[n - 1] << "\n";
 }
 
 int main() {
